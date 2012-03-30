@@ -229,4 +229,67 @@ public class TestNondeterministicAutomatonByThompsonApproach extends TestCase {
         assertFalse(automaton.accepts("bcccccc"));
         assertFalse(automaton.accepts("z"));
     }
+
+    /**
+     * Marcin Sadowski
+     * Indeks numer 369644
+     * Automat akceptujący poznańskie numery telefonów
+     * Postać akceptowalnych numerów:
+     * 61 XXX-XX-XX lub (61) XXX-XX-XX
+     */
+    public final void TelephoneNumbersInPoznan() {
+        final AutomatonSpecification spec = new NaiveAutomatonSpecification();
+        
+        State q0a = spec.addState();
+        State q1a = spec.addState();
+        State q2a = spec.addState();
+        State q3a = spec.addState();
+        State q4a = spec.addState();
+        State q5a = spec.addState();
+        State q6a = spec.addState();
+        State q7a = spec.addState();
+        State q8a = spec.addState();
+        State q9a = spec.addState();
+        State q10a = spec.addState();
+        State q11a = spec.addState();
+        State q12a = spec.addState();
+        State q13a = spec.addState();
+        State q14a = spec.addState();
+        State q15a = spec.addState();
+        
+        TransitionLabel digitLabel = new CharRangeTransitionLabel('0', '9');
+        spec.addTransition(q0a, q1a, new CharTransitionLabel('('));
+        spec.addTransition(q1a, q2a, new CharTransitionLabel('6'));
+        spec.addTransition(q2a, q3a, new CharTransitionLabel('1'));
+        spec.addTransition(q3a, q4a, new CharTransitionLabel(')'));
+        spec.addTransition(q4a, q5a, new CharTransitionLabel(' '));
+        spec.addTransition(q0a, q6a, new CharTransitionLabel('6'));
+        spec.addTransition(q6a, q4a, new CharTransitionLabel('1'));
+        spec.addTransition(q4a, q5a, new CharTransitionLabel(' '));
+        spec.addTransition(q5a, q7a, digitLabel);
+        spec.addTransition(q7a, q8a, digitLabel);
+        spec.addTransition(q8a, q9a, digitLabel);
+        spec.addTransition(q9a, q10a, new CharTransitionLabel('-'));
+        spec.addTransition(q10a, q11a, digitLabel);
+        spec.addTransition(q11a, q12a, digitLabel);
+        spec.addTransition(q12a, q13a, new CharTransitionLabel('-'));
+        spec.addTransition(q13a, q14a, digitLabel);
+        spec.addTransition(q14a, q15a, digitLabel);
+        spec.markAsInitial(q0a);
+        spec.markAsFinal(q15a);
+        
+        final NondeterministicAutomatonByThompsonApproach automaton =
+            new NondeterministicAutomatonByThompsonApproach(spec);
+        
+        assertTrue(automaton.accepts("(61) 355-43-45"));
+        assertTrue(automaton.accepts("(61) 345-45-74"));
+        assertTrue(automaton.accepts("(61) 286-81-49"));
+        assertTrue(automaton.accepts("61 976-64-26"));
+        assertFalse(automaton.accepts("(61)123-45-67"));
+        assertFalse(automaton.accepts("61-837-34-83"));
+        assertFalse(automaton.accepts("612872183"));
+        assertTrue(automaton.accepts("61 873-97-08"));
+        assertTrue(automaton.accepts("61 255-55-88"));
+        assertFalse(automaton.accepts("61 8765396"));
+    }
 }
